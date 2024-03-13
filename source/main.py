@@ -152,7 +152,7 @@ class Admin:
         self.image_label.image=self.image
         self.image_label.place(x=0, y=0)
 
-        self.profile_image = Image.open('../assets/profile.png')
+        self.profile_image = Image.open('../assets/stdprofile.png')
         self.profile_image = self.profile_image.resize((50, 50))
         self.profile_photo = ImageTk.PhotoImage(self.profile_image)
         self.profile_button = Button(self.right, image=self.profile_photo, bg='gray', bd=0,
@@ -244,7 +244,7 @@ class Student:
         self.image_label.image=self.image
         self.image_label.place(x=0, y=0)
 
-        self.profile_image = Image.open('../assets/profile.png')
+        self.profile_image = Image.open('../assets/stdprofile.png')
         self.profile_image = self.profile_image.resize((50, 50))
         self.profile_photo = ImageTk.PhotoImage(self.profile_image)
         self.profile_button = Button(self.left, image=self.profile_photo, bg='gray', bd=0,
