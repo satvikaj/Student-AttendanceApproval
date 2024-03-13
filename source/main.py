@@ -1,4 +1,4 @@
-from tkinter import Tk,Frame,Label,Entry,Button,messagebox,Listbox,END,LEFT
+from tkinter import Tk,Frame,Label,Entry,Button,messagebox,Listbox,Scrollbar,ttk,VERTICAL,HORIZONTAL,END,LEFT
 from PIL import Image,ImageTk
 import mysql.connector
 
@@ -164,6 +164,13 @@ class Admin:
        
         self.std_btn = Button(self.right, text=' STUDENT REQUESTS', font=fonts, bg='firebrick', fg='white',width=22, command=self.request)
         self.std_btn.place(x=150, y=200)
+        self.std_btn = Button(self.right, text='STUDENT DETAILS', font=fonts, bg='firebrick', fg='white',width=22, command=self.student1)
+        self.std_btn.place(x=150, y=250)
+
+    def student1(self):
+        self.right.destroy()
+    # Pass the branch of the logged-in HOD to Std_page
+        Admin_obj = Std_page(root, self.id)
 
         
 
@@ -175,6 +182,66 @@ class Admin:
     def profile(self, id):
         self.right.destroy()
         profile_obj = admin_profile_page(root, self.id)
+    
+class Std_page:
+    def __init__(self, root, id):
+        self.root = root
+        self.id=id
+        self.root.title("STUDENT DETAILS")
+        self.page = Frame(self.root, width=1000, height=600,bg='gray86')
+        self.page.place(x=0, y=0)
+
+        heading_label = Label(self.page, text="STUDENT DETAILS", font=('bold',25 ), bg='gray86')
+        heading_label.pack(pady=5)
+
+        self.back_image = Image.open('../assets/backicon.png')
+        self.back_image = self.back_image.resize((40, 40))
+        self.back_image = ImageTk.PhotoImage(self.back_image)
+        self.back_button = Label(self.page, image=self.back_image, bg='gray', bd=0)
+        self.back_button.image = self.back_image
+        self.back_button.place(x=20, y=20)
+        self.back_button.bind('<Button-1>', self.go_back)
+
+
+        self.refresh_requests()
+
+    def refresh_requests(self):
+        mycursor.execute("SELECT branch FROM admin WHERE id=%s", (self.id,))
+        hod_branch = mycursor.fetchone()[0]
+        mycursor.execute("SELECT * FROM student WHERE branch=%s", (hod_branch,))
+        students = mycursor.fetchall()
+        if students:
+            self.tree = ttk.Treeview(self.page, columns=('ID', 'Name', 'Branch Name', 'Phone Number'), show='headings', height=20)
+            self.tree.heading('ID', text='ID')
+            self.tree.heading('Name', text='Name')
+            self.tree.heading('Branch Name', text='Branch') 
+            self.tree.heading('Phone Number', text='Phone no')
+    
+            self.tree.column('ID', width=250, anchor='center')  
+            self.tree.column('Name', width=300, anchor='center')   
+            self.tree.column('Branch Name', width=250, anchor='center')  
+            self.tree.column('Phone Number', width=250, anchor='center')
+
+            self.tree.pack(fill='both', expand=True, pady=80)
+        
+            # Configure column weights
+            self.tree.columnconfigure(0, weight=1)  
+
+            for student in students:
+                self.tree.insert('', 'end', values=student)
+
+            self.tree.pack(pady=80)
+            v_scrollbar = Scrollbar(self.page, orient=VERTICAL, command=self.tree.yview)
+            self.tree.configure(yscrollcommand=v_scrollbar.set)
+ 
+            h_scrollbar = Scrollbar(self.page, orient=HORIZONTAL, command=self.tree.xview)
+            self.tree.configure(xscrollcommand=h_scrollbar.set)
+        else:
+            messagebox.showinfo("No results found.")
+
+    def go_back(self, event):
+        self.page.destroy()
+        Admin_obj = Admin_page(root, '')
 
 class admin_profile_page(Login_page):
     def __init__(self, root,id):
