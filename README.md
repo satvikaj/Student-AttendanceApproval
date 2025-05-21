@@ -69,5 +69,5 @@ The core system is managed via `main.py`, which provides a GUI built using Tkint
 
 1. Clone this repository:
    ```bash
-git clone https://github.com/satvikaj/Student-AttendanceApproval.git
+      git clone https://github.com/satvikaj/Student-AttendanceApproval.git
    cd student-attendance-approval
